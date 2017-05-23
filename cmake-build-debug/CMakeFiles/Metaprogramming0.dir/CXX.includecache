@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tim/CLionProjects/Metaprogramming0/Vector.cpp
+
+/home/tim/CLionProjects/Metaprogramming0/matrix.cpp
+iostream
+-
+utility
+-
+iterator
+-
+algorithm
+-
+
+/home/tim/CLionProjects/Metaprogramming0/symm.cpp
+
