@@ -94,13 +94,13 @@ public:
         if(m_size >= m_capacity){
             cout << "=========================================" << endl;
             output("before expanding");
-            m_dimension++;
-            m_capacity = m_dimension * m_dimension;
             T *newlist = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-            for (size_t i = 0; i < m_size; ++i) {
-                newlist[to_internal_i(m_dimension, i)] = list[to_internal_i(m_dimension-1, i)];
+            for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
+                newlist[i] = list[i];
             }
             swap(newlist, list);
+            m_dimension++;
+            m_capacity = m_dimension * m_dimension;
 
             delete[] newlist;
             cout << "capacity increased to: " << m_capacity << endl;
@@ -214,19 +214,19 @@ public:
 
 
 int main() {
-    Matrix<int> v(16);
-    v.output("base");
-    for (int i = 0; i < 16; ++i) {
-        v[i] = i;
-        v.output(to_string(i).c_str());
-    }
-
-
-//    v.output("before");
-//    for (int i = 0; i < 6; ++i) {
-//        v.push_back(i);
+    Matrix<int> v(0);
+//    v.output("base");
+//    for (int i = 0; i < 16; ++i) {
+//        v[i] = i;
 //        v.output(to_string(i).c_str());
 //    }
+
+
+    v.output("before");
+    for (int i = 0; i < 6; ++i) {
+        v.push_back(i);
+        v.output(to_string(i).c_str());
+    }
 
 //    v.pop_front();
 //    v.output("v");
