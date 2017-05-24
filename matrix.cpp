@@ -15,20 +15,44 @@ template<class T>
 class Matrix {
 private:
     size_t m_size, m_capacity, m_dimension, m_size_internal;
-    T *list;
+    T* list;
 
+    const size_t to_internal_i(size_t i)const {
+        size_t i2 = i;
+        // first to two dimensional
+        size_t x = i2 % m_dimension;
+        size_t y = floor(i2 / m_dimension);
 
+        // swap if needed
+        if (x > y) {
+            size_t z = x;
+            x = y;
+            y = z;
+        }
+
+        // then back to one dimensional
+//        i2 = x + (y * dim);
+
+        size_t i3 = 0;
+        size_t temp = 0;
+        for (int j = 0; j < y; ++j) {
+            i3 += ++temp;
+        }
+        i3 += x;
+        return i3;
+    }
 
 public:
     explicit Matrix(size_t n = 0) {
         m_dimension = ceil(sqrt(n));
         m_size = n;
         m_capacity = m_dimension * m_dimension;
-        m_size_internal = 0;
+        m_size_internal = to_internal_i(n);
         list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
         cout << "--" <<  m_dimension << "--" << m_size << "--" << m_capacity << "--" << endl;
-
-        cout << "!!!" << ((m_dimension * (m_dimension + 1)) / 2) << endl;
+//        for (int i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
+//            list[i] = 0;
+//        }
     }
 
     Matrix(const Matrix &m) {
@@ -83,17 +107,17 @@ public:
     }
 
     T &operator[](size_t i) {
-        return list[to_internal_i(m_dimension, i)];
+        return list[to_internal_i(i)];
     }
 
     const T &operator[](size_t i) const {
-        return list[to_internal_i(m_dimension, i)];
+        return list[to_internal_i(i)];
     }
 
     void push_back(const T &t){
         if(m_size >= m_capacity){
-            cout << "=========================================" << endl;
-            output("before expanding");
+//            cout << "=========================================" << endl;
+//            output("before expanding");
             T *newlist = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
             for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
                 newlist[i] = list[i];
@@ -104,16 +128,14 @@ public:
 
             delete[] newlist;
             cout << "capacity increased to: " << m_capacity << endl;
-            output("after expanding");
-            cout << "==========================================" << endl;
+//            output("after expanding");
+//            cout << "==========================================" << endl;
         }
 
-//        cout << "before: " << m_size_internal << endl;
-//        list[m_size_internal] = t;
-//        m_size_internal++;
-//        cout << "after: " << m_size_internal << endl;
+        list[m_size_internal] = t;
+        m_size_internal++;
 
-        list[to_internal_i(m_dimension, m_size)] = t;
+//        list[to_internal_i(m_size)] = t;
         if (m_size % m_dimension == floor(m_size / m_dimension)) {
             m_size += 1;
         } else{
@@ -134,9 +156,15 @@ public:
 //    }
 
     void pop_front() { // = remove?
-        for (size_t i = 1; i < m_size; ++i)
+        for (size_t i = 1; i < m_size_internal; ++i)
             list[i - 1] = list[i];
-        --m_size;
+        --m_size_internal;
+        if (m_size % m_dimension == floor(m_size / m_dimension)) {
+            m_size -= 1;
+        } else{
+            m_size -= 2;
+        }
+        list[m_size_internal] = 0;
     }
 
     size_t size() const {
@@ -155,7 +183,7 @@ public:
     }
 
     iterator end() {
-        return list + m_size;
+        return list + m_size_internal;
     }
 
     const_iterator begin() const {
@@ -163,7 +191,7 @@ public:
     }
 
     const_iterator end() const {
-        return list + m_size;
+        return list + m_size_internal;
     }
 
     const_iterator cbegin() const {
@@ -171,7 +199,7 @@ public:
     }
 
     const_iterator cend() const {
-        return list + m_size;
+        return list + m_size_internal;
     }
 
     void output(const char *label) {
@@ -180,64 +208,47 @@ public:
         for (int i = 0; i < m_capacity; ++i) {
             if(i % m_dimension == 0 && i != 0)
                 cout << endl;
-            cout << list[to_internal_i(m_dimension, i)] << '\t';
+            cout << list[to_internal_i(i)] << '\t';
         }
         cout << endl;
-    }
-
-    const size_t to_internal_i(size_t dim, size_t i)const {
-        size_t i2 = i;
-        // first to two dimensional
-        size_t x = i2 % dim;
-        size_t y = floor(i2 / dim);
-
-        // swap if needed
-        if (x > y) {
-            size_t z = x;
-            x = y;
-            y = z;
-        }
-
-        // then back to one dimensional
-//        i2 = x + (y * dim);
-
-        size_t i3 = 0;
-        size_t temp = 0;
-        for (int j = 0; j < y; ++j) {
-            i3 += ++temp;
-        }
-        i3 += x;
-        return i3;
     }
 };
 
 
 
 int main() {
-    Matrix<int> v(0);
-//    v.output("base");
-//    for (int i = 0; i < 16; ++i) {
-//        v[i] = i;
-//        v.output(to_string(i).c_str());
-//    }
+    Matrix<int> v(9);
 
-
-    v.output("before");
-    for (int i = 0; i < 6; ++i) {
-        v.push_back(i);
-        v.output(to_string(i).c_str());
+    v.output("one");
+    for (int i = 0; i < 9; ++i) {
+        v[i] = i;
     }
 
-//    v.pop_front();
-//    v.output("v");
-//    copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
-//    cout << endl;
-//    Matrix<int> v2 = v;
-//    v.output("v2");
-//    v.pop_front();
-//    v2 = v;
-//    v.output("v2");
+    v.output("two");
+
+    for (int i = 9; i < 18; ++i) {
+        v.push_back(i);
+    }
+
+    v.output("three");
+
+    v.pop_front();
+    v.pop_front();
+    v.pop_front();
+
+    v.output("four");
+
+    copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
+    cout << endl;
+
+    Matrix<int> v2 = v;
+    v.output("original");
+    v.pop_front();
+    v2 = v;
+    v.output("popped");
+
+
 //    v = std::move(v2);  // (2)
 //    v.output("v after move");
-    // output("v2 after move", v2); // (1) - referencing v2 after moving it in (2)
+//    v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
 }
