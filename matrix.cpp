@@ -122,36 +122,24 @@ public:
         swap(m_size_internal, other.m_size_internal);
     }
 
-    T &operator[](size_t i) {
+    T &operator[](size_t i) { // element access via non constant iterator
         return list[to_internal_i(i)];
     }
 
-    const T &operator[](size_t i) const {
+    const T &operator[](size_t i) const { // element access via constant iterator
         return list[to_internal_i(i)];
     }
 
-    void push_back(const T &t){
-        if(m_size >= m_capacity){
-//            cout << "=========================================" << endl;
-//            output("before expanding");
-            T *newlist = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-            for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
-                newlist[i] = list[i];
-            }
-            std::swap(newlist, list);
-            m_dimension++;
-            m_capacity = m_dimension * m_dimension;
+    void push_front(const T &t){ // insert front
+        if (m_size >= m_capacity)
+            increase_capacity();
 
-            delete[] newlist;
-            cout << "capacity increased to: " << m_capacity << endl;
-//            output("after expanding");
-//            cout << "==========================================" << endl;
+        for (int i = m_size_internal; i >= 0; --i) {
+            list[i+1] = list[i];
         }
-
-        list[m_size_internal] = t;
+        list[0] = t;
         m_size_internal++;
 
-//        list[to_internal_i(m_size)] = t;
         if (m_size % m_dimension == floor(m_size / m_dimension)) {
             m_size += 1;
         } else{
@@ -159,19 +147,34 @@ public:
         }
     }
 
-//    void push_back(const T &rcT) {// = insert?
-//        if (m_size++ == m_capacity) {
-//            m_capacity += 10;
-//            T *newlist = new T[m_capacity];
-//            for (size_t i = 0; i < m_size - 1; ++i)
-//                newlist[i] = list[i];
-//            swap(newlist, list);
-//            delete[] newlist;
-//        }
-//        list[m_size - 1] = rcT;
-//    }
+    void push_back(const T &t){ // insert back
+        if(m_size >= m_capacity)
+            increase_capacity();
 
-    void pop_front() { // = remove?
+        list[m_size_internal] = t;
+        m_size_internal++;
+
+        if (m_size % m_dimension == floor(m_size / m_dimension)) {
+            m_size += 1;
+        } else{
+            m_size += 2;
+        }
+    }
+
+    void increase_capacity(){ // well.. increase capacity
+        T *newlist = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
+        for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
+            newlist[i] = list[i];
+        }
+        std::swap(newlist, list);
+        m_dimension++;
+        m_capacity = m_dimension * m_dimension;
+
+        delete[] newlist;
+        cout << "capacity increased to: " << m_capacity << endl;
+    }
+
+    void pop_front() { // remove
         for (size_t i = 1; i < m_size_internal; ++i)
             list[i - 1] = list[i];
         --m_size_internal;
@@ -271,4 +274,7 @@ int main() {
     swap(v, v2);
     v.output("v after swap");
     v2.output("v2 after swap");
+
+    v2.push_front(99);
+    v2.output("v2 after pushing 99 up front");
 }
