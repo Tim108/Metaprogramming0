@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(SOURCE_FILES symm.cpp symm.h Vector.cpp Vector.h matrix.cpp matrix.h)
 add_executable(Metaprogramming0 ${SOURCE_FILES})
 
-set(BOOST_ROOT C:/Development/boost_1_63_0)
+set(BOOST_ROOT /home/tim/boost_1_64_0)
 
 find_package(Boost REQUIRED)
 

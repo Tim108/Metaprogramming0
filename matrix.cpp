@@ -55,7 +55,7 @@ public:
 //        }
     }
 
-    Matrix(const Matrix &m) {
+    Matrix(const Matrix &m) { // copy constructor
         m_dimension = m.m_dimension;
         m_size = m.m_size;
         m_capacity = m.m_capacity;
@@ -64,14 +64,17 @@ public:
         copy(m.cbegin(), m.cend(), list);
     }
 
-    Matrix(Matrix &&m) {
+    Matrix(Matrix &&m) { // move constructor
         m_dimension = m.m_dimension;
         m_size = m.m_size;
         m_capacity = m.m_capacity;
         m_size_internal = m.m_size_internal;
         list = m.list;
-        m.list = nullptr;
+        m.list = new T[0];
         m.m_size = 0;
+        m.m_capacity = 0;
+        m.m_size_internal = 0;
+        m.m_dimension = 0;
     }
 
     ~Matrix() {
@@ -79,7 +82,7 @@ public:
         // Not delete m_p;
     }
 
-    Matrix &operator=(const Matrix &m) {
+    Matrix &operator=(const Matrix &m) { // copy
         if (this != &m) {
             delete[] list;
             m_dimension = m.m_dimension;
@@ -92,7 +95,7 @@ public:
         return *this;
     }
 
-    Matrix &operator=(Matrix &&m) {
+    Matrix &operator=(Matrix &&m) { // move
         if (this != &m) {
             delete[] list;
             m_dimension = m.m_dimension;
@@ -101,9 +104,22 @@ public:
             m_size_internal = m.m_size_internal;
             list = m.list;
             m.list = nullptr;
+            m.m_dimension = 0;
+            m.m_capacity = 0;
+            m.m_size = 0;
+            m.m_size_internal = 0;
             // rrV.m_size = 0;    // better not to do this to be able to detect errors like (1)
         }
         return *this;
+    }
+
+    void swap(Matrix &other){
+        using std::swap;
+        swap(list, other.list);
+        swap(m_dimension, other.m_dimension);
+        swap(m_capacity, other.m_capacity);
+        swap(m_size, other.m_size);
+        swap(m_size_internal, other.m_size_internal);
     }
 
     T &operator[](size_t i) {
@@ -122,7 +138,7 @@ public:
             for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
                 newlist[i] = list[i];
             }
-            swap(newlist, list);
+            std::swap(newlist, list);
             m_dimension++;
             m_capacity = m_dimension * m_dimension;
 
@@ -248,7 +264,11 @@ int main() {
     v.output("popped");
 
 
-//    v = std::move(v2);  // (2)
-//    v.output("v after move");
-//    v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
+    v = std::move(v2);  // (2)
+    v.output("v after move");
+    v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
+
+    swap(v, v2);
+    v.output("v after swap");
+    v2.output("v2 after swap");
 }

@@ -1,3 +1,1 @@
-"C:\Program Files\JetBrains\CLion 2017.1.2\bin\cmake\bin\cmake.exe" -E remove -f CMakeFiles\Metaprogramming0.dir/objects.a
-C:\Development\TDM-GCC-64\bin\ar.exe cr CMakeFiles\Metaprogramming0.dir/objects.a @CMakeFiles\Metaprogramming0.dir\objects1.rsp
-C:\Development\TDM-GCC-64\bin\g++.exe  -g   -Wl,--whole-archive CMakeFiles\Metaprogramming0.dir/objects.a -Wl,--no-whole-archive  -o Metaprogramming0.exe -Wl,--out-implib,libMetaprogramming0.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Metaprogramming0.dir\linklibs.rsp
+/usr/bin/c++   -g   CMakeFiles/Metaprogramming0.dir/symm.cpp.o CMakeFiles/Metaprogramming0.dir/Vector.cpp.o CMakeFiles/Metaprogramming0.dir/matrix.cpp.o  -o Metaprogramming0 
