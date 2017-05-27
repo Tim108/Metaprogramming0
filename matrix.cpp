@@ -8,8 +8,15 @@
 #include <utility>
 #include <iterator>
 #include <algorithm>
+#include <memory>
 
 using namespace std;
+
+template<class T>
+struct MatrixData{
+    size_t m_size, m_capacity, m_dimension, m_size_internal;
+    T* list;
+};
 
 template<class T>
 class Matrix {
