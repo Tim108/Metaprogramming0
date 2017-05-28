@@ -13,22 +13,24 @@
 using namespace std;
 
 template<class T>
-struct MatrixData{
+struct MatrixData {
     size_t m_size, m_capacity, m_dimension, m_size_internal;
-    T* list;
+    T *list;
+    unsigned long refs;
 };
 
 template<class T>
 class Matrix {
 private:
-    size_t m_size, m_capacity, m_dimension, m_size_internal;
-    T* list;
+    MatrixData<T> *data;
 
-    const size_t to_internal_i(size_t i)const {
+    const size_t to_internal_i(size_t i) const {
+        if (i == 0)
+            return 0;
         size_t i2 = i;
         // first to two dimensional
-        size_t x = i2 % m_dimension;
-        size_t y = floor(i2 / m_dimension);
+        size_t x = i2 % data->m_dimension;
+        size_t y = floor(i2 / data->m_dimension);
 
         // swap if needed
         if (x > y) {
@@ -51,237 +53,290 @@ private:
 
 public:
     explicit Matrix(size_t n = 0) {
-        m_dimension = ceil(sqrt(n));
-        m_size = n;
-        m_capacity = m_dimension * m_dimension;
-        m_size_internal = to_internal_i(n);
-        list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-        cout << "--" <<  m_dimension << "--" << m_size << "--" << m_capacity << "--" << endl;
+        data = new MatrixData<T>;
+        data->m_dimension = ceil(sqrt(n));
+        data->m_size = n;
+        data->m_capacity = data->m_dimension * data->m_dimension;
+        data->m_size_internal = to_internal_i(n);
+        data->list = new T[((data->m_dimension * (data->m_dimension + 1)) / 2) * sizeof(T)];
+        cout << "--" << data->m_dimension << "--" << data->m_size << "--" << data->m_capacity << "--" << endl;
 //        for (int i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
 //            list[i] = 0;
 //        }
+        data->refs = 1;
     }
 
     Matrix(const Matrix &m) { // copy constructor
-        m_dimension = m.m_dimension;
-        m_size = m.m_size;
-        m_capacity = m.m_capacity;
-        m_size_internal = m.m_size_internal;
-        list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-        copy(m.cbegin(), m.cend(), list);
+        data = m.data;
+        data->refs++;
+//        m_dimension = m.m_dimension;
+//        m_size = m.m_size;
+//        m_capacity = m.m_capacity;
+//        m_size_internal = m.m_size_internal;
+//        list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
+//        copy(m.cbegin(), m.cend(), list);
     }
 
     Matrix(Matrix &&m) { // move constructor
-        m_dimension = m.m_dimension;
-        m_size = m.m_size;
-        m_capacity = m.m_capacity;
-        m_size_internal = m.m_size_internal;
-        list = m.list;
-        m.list = new T[0];
-        m.m_size = 0;
-        m.m_capacity = 0;
-        m.m_size_internal = 0;
-        m.m_dimension = 0;
+        data = m.data;
+        m.data = new MatrixData<T>;
+//        m_dimension = m.m_dimension;
+//        m_size = m.m_size;
+//        m_capacity = m.m_capacity;
+//        m_size_internal = m.m_size_internal;
+//        list = m.list;
+//        m.list = new T[0];
+//        m.m_size = 0;
+//        m.m_capacity = 0;
+//        m.m_size_internal = 0;
+//        m.m_dimension = 0;
     }
 
     ~Matrix() {
-        delete[] list;
+        data->refs--;
+        if (data->refs == 0) {
+            delete data;
+        }
         // Not delete m_p;
     }
 
     Matrix &operator=(const Matrix &m) { // copy
         if (this != &m) {
-            delete[] list;
-            m_dimension = m.m_dimension;
-            m_size = m.m_size;
-            m_capacity = m.m_capacity;
-            m_size_internal = m.m_size_internal;
-            list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-            copy(m.cbegin(), m.cend(), list);
+            data = m.data;
+//            delete[] list;
+//            m_dimension = m.m_dimension;
+//            m_size = m.m_size;
+//            m_capacity = m.m_capacity;
+//            m_size_internal = m.m_size_internal;
+//            list = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
+//            copy(m.cbegin(), m.cend(), list);
         }
         return *this;
     }
 
     Matrix &operator=(Matrix &&m) { // move
         if (this != &m) {
-            delete[] list;
-            m_dimension = m.m_dimension;
-            m_size = m.m_size;
-            m_capacity = m.m_capacity;
-            m_size_internal = m.m_size_internal;
-            list = m.list;
-            m.list = nullptr;
-            m.m_dimension = 0;
-            m.m_capacity = 0;
-            m.m_size = 0;
-            m.m_size_internal = 0;
+            data = m.data;
+            m.data = new MatrixData<T>;
+//            delete[] list;
+//            m_dimension = m.m_dimension;
+//            m_size = m.m_size;
+//            m_capacity = m.m_capacity;
+//            m_size_internal = m.m_size_internal;
+//            list = m.list;
+//            m.list = nullptr;
+//            m.m_dimension = 0;
+//            m.m_capacity = 0;
+//            m.m_size = 0;
+//            m.m_size_internal = 0;
             // rrV.m_size = 0;    // better not to do this to be able to detect errors like (1)
         }
         return *this;
     }
 
-    void swap(Matrix &other){
+    void swap(Matrix &other) {
         using std::swap;
-        swap(list, other.list);
-        swap(m_dimension, other.m_dimension);
-        swap(m_capacity, other.m_capacity);
-        swap(m_size, other.m_size);
-        swap(m_size_internal, other.m_size_internal);
+        swap(data, other.data);
+//        swap(list, other.list);
+//        swap(m_dimension, other.m_dimension);
+//        swap(m_capacity, other.m_capacity);
+//        swap(m_size, other.m_size);
+//        swap(m_size_internal, other.m_size_internal);
     }
 
-    T &operator[](size_t i) { // element access via non constant iterator
-        return list[to_internal_i(i)];
+    void deep_copy(){
+        if (data->refs > 1) {
+            data->refs--;
+            MatrixData<T> *newData = new MatrixData<T>;
+            newData->refs = 1;
+            newData->m_dimension = data->m_dimension;
+            newData->m_size_internal = data->m_size_internal;
+            newData->m_size = data->m_size;
+            newData->m_capacity = data->m_size;
+            newData->list = new T[((newData->m_dimension * (newData->m_dimension + 1)) / 2) * sizeof(T)];
+            copy(cbegin(), cend(), newData->list);
+            data = newData;
+        }
     }
 
-    const T &operator[](size_t i) const { // element access via constant iterator
-        return list[to_internal_i(i)];
+    T &operator[](size_t i) {
+        return data->list[to_internal_i(i)];
     }
 
-    void push_front(const T &t){ // insert front
-        if (m_size >= m_capacity)
+    const T &operator[](size_t i) const {
+        return data->list[to_internal_i(i)];
+    }
+
+    void push_front(const T &t) { // insert front
+        deep_copy();
+        if (data->m_size >= data->m_capacity){}
             increase_capacity();
 
-        for (int i = m_size_internal; i >= 0; --i) {
-            list[i+1] = list[i];
+        for (int i = data->m_size_internal; i >= 0; --i) {
+            data->list[i + 1] = data->list[i];
         }
-        list[0] = t;
-        m_size_internal++;
+        data->list[0] = t;
+        data->m_size_internal++;
 
-        if (m_size % m_dimension == floor(m_size / m_dimension)) {
-            m_size += 1;
-        } else{
-            m_size += 2;
+        if (data->m_size % data->m_dimension == floor(data->m_size / data->m_dimension)) {
+            data->m_size += 1;
+        } else {
+            data->m_size += 2;
         }
     }
 
-    void push_back(const T &t){ // insert back
-        if(m_size >= m_capacity)
+    void push_back(const T &t) { // insert back
+        if (data->m_size >= data->m_capacity)
             increase_capacity();
 
-        list[m_size_internal] = t;
-        m_size_internal++;
+        data->list[data->m_size_internal] = t;
+        data->m_size_internal++;
 
-        if (m_size % m_dimension == floor(m_size / m_dimension)) {
-            m_size += 1;
-        } else{
-            m_size += 2;
+        if (data->m_size % data->m_dimension == floor(data->m_size / data->m_dimension)) {
+            data->m_size += 1;
+        } else {
+            data->m_size += 2;
         }
     }
 
-    void increase_capacity(){ // well.. increase capacity
-        T *newlist = new T[((m_dimension * (m_dimension + 1)) / 2) * sizeof(T)];
-        for (size_t i = 0; i < ((m_dimension * (m_dimension + 1)) / 2); ++i) {
-            newlist[i] = list[i];
+    void increase_capacity() { // well.. increase capacity
+        T *newlist = new T[((data->m_dimension * (data->m_dimension + 1)) / 2) * sizeof(T)];
+        for (size_t i = 0; i < ((data->m_dimension * (data->m_dimension + 1)) / 2); ++i) {
+            newlist[i] = data->list[i];
         }
-        std::swap(newlist, list);
-        m_dimension++;
-        m_capacity = m_dimension * m_dimension;
+        std::swap(newlist, data->list);
+        data->m_dimension++;
+        data->m_capacity = data->m_dimension * data->m_dimension;
 
         delete[] newlist;
-        cout << "capacity increased to: " << m_capacity << endl;
+        cout << "capacity increased to: " << data->m_capacity << endl;
     }
 
     void pop_front() { // remove
-        for (size_t i = 1; i < m_size_internal; ++i)
-            list[i - 1] = list[i];
-        --m_size_internal;
-        if (m_size % m_dimension == floor(m_size / m_dimension)) {
-            m_size -= 1;
-        } else{
-            m_size -= 2;
+        for (size_t i = 1; i < data->m_size_internal; ++i)
+            data->list[i - 1] = data->list[i];
+        --data->m_size_internal;
+        if (data->m_size % data->m_dimension == floor(data->m_size / data->m_dimension)) {
+            data->m_size -= 1;
+        } else {
+            data->m_size -= 2;
         }
-        list[m_size_internal] = 0;
+        data->list[data->m_size_internal] = 0;
     }
 
     size_t size() const {
-        return m_size;
+        return data->m_size;
     }
 
     size_t capacity() const {
-        return m_capacity;
+        return data->m_capacity;
     }
 
     typedef T *iterator;
     typedef const T *const_iterator;
 
     iterator begin() {
-        return list;
+        return data->list;
     }
 
     iterator end() {
-        return list + m_size_internal;
+        return data->list + data->m_size_internal;
     }
 
     const_iterator begin() const {
-        return list;
+        return data->list;
     }
 
     const_iterator end() const {
-        return list + m_size_internal;
+        return data->list + data->m_size_internal;
     }
 
     const_iterator cbegin() const {
-        return list;
+        return data->list;
     }
 
     const_iterator cend() const {
-        return list + m_size_internal;
+        return data->list + data->m_size_internal;
     }
 
     void output(const char *label) {
         cout << label << ": " << flush;
-        cout << m_size << ' ' << m_capacity << endl;
-        for (int i = 0; i < m_capacity; ++i) {
-            if(i % m_dimension == 0 && i != 0)
+        cout << data->m_size << ' ' << data->m_capacity << endl;
+        for (int i = 0; i < data->m_capacity; ++i) {
+            if (i % data->m_dimension == 0 && i != 0)
                 cout << endl;
-            cout << list[to_internal_i(i)] << '\t';
+            cout << data->list[to_internal_i(i)] << '\t';
         }
         cout << endl;
     }
 };
 
 
-
 int main() {
-    Matrix<int> v(9);
+    bool basicTest = true;
+    bool COWTest = true;
 
-    v.output("one");
-    for (int i = 0; i < 9; ++i) {
-        v[i] = i;
+    if (basicTest) {
+
+        Matrix<int> v(9);
+
+        v.output("one");
+        for (int i = 0; i < 9; ++i) {
+            v[i] = i;
+        }
+
+        v.output("two");
+
+        for (int i = 9; i < 18; ++i) {
+            v.push_back(i);
+        }
+
+        v.output("three");
+
+        v.pop_front();
+        v.pop_front();
+        v.pop_front();
+
+        v.output("four");
+
+        copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
+        cout << endl;
+
+        Matrix<int> v2 = v;
+        v.output("original");
+        v.pop_front();
+        v2 = v;
+        v.output("popped");
+
+
+        v = std::move(v2);  // (2)
+        v.output("v after move");
+        v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
+
+        swap(v, v2);
+        v.output("v after swap");
+        v2.output("v2 after swap");
+
+        v2.push_front(99);
+        v2.output("v2 after pushing 99 up front");
     }
 
-    v.output("two");
+    if (COWTest) {
+        Matrix<int> a(0);
+        a.push_front(1);
+        a.push_front(2);
+        a.push_front(3);
+        a.push_front(4);
+        a.output("A - Start");
 
-    for (int i = 9; i < 18; ++i) {
-        v.push_back(i);
+        Matrix<int> b(a);
+        a.output("A - After creating B");
+        b.output("B - After creating B");
+//        // good so far...
+//
+        a.push_front(99); // should add only to 'a' not 'b'
+        a.output("A - After adding 99 to A");
+        b.output("B - After adding 99 to A");
     }
 
-    v.output("three");
-
-    v.pop_front();
-    v.pop_front();
-    v.pop_front();
-
-    v.output("four");
-
-    copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
-    cout << endl;
-
-    Matrix<int> v2 = v;
-    v.output("original");
-    v.pop_front();
-    v2 = v;
-    v.output("popped");
-
-
-    v = std::move(v2);  // (2)
-    v.output("v after move");
-    v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
-
-    swap(v, v2);
-    v.output("v after swap");
-    v2.output("v2 after swap");
-
-    v2.push_front(99);
-    v2.output("v2 after pushing 99 up front");
 }
