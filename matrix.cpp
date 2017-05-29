@@ -14,9 +14,9 @@ using namespace std;
 
 template<class T>
 struct MatrixData {
-    size_t m_size, m_capacity, m_dimension, m_size_internal;
-    T *list;
-    unsigned long refs;
+    size_t m_size = 0, m_capacity = 0, m_dimension = 0, m_size_internal = 0;
+    T *list = new T[0];
+    unsigned long refs = 0;
 };
 
 template<class T>
@@ -273,7 +273,7 @@ public:
 
 
 int main() {
-    bool basicTest = true;
+    bool basicTest = false;
     bool COWTest = true;
 
     if (basicTest) {

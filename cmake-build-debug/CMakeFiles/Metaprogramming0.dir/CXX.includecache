@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/tim/CLionProjects/Metaprogramming0/Vector.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/Vector.cpp
 
-/home/tim/CLionProjects/Metaprogramming0/matrix.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/matrix.cpp
 iostream
 -
 utility
@@ -20,5 +20,5 @@ algorithm
 memory
 -
 
-/home/tim/CLionProjects/Metaprogramming0/symm.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/symm.cpp
 
