@@ -273,7 +273,7 @@ public:
 
 
 int main() {
-    bool basicTest = false;
+    bool basicTest = true;
     bool COWTest = true;
 
     if (basicTest) {

@@ -4,15 +4,16 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/Tim/ClionProjects/Metaprogramming0/Vector.cpp" "C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/Vector.cpp.obj"
-  "C:/Users/Tim/ClionProjects/Metaprogramming0/matrix.cpp" "C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/matrix.cpp.obj"
-  "C:/Users/Tim/ClionProjects/Metaprogramming0/symm.cpp" "C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/symm.cpp.obj"
+  "/home/tim/CLionProjects/Metaprogramming0/Vector.cpp" "/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/Vector.cpp.o"
+  "/home/tim/CLionProjects/Metaprogramming0/ass2.cpp" "/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/ass2.cpp.o"
+  "/home/tim/CLionProjects/Metaprogramming0/matrix.cpp" "/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/matrix.cpp.o"
+  "/home/tim/CLionProjects/Metaprogramming0/symm.cpp" "/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir/symm.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "C:/Development/boost_1_63_0"
+  "/home/tim/boost_1_64_0"
   )
 
 # Targets to which this target links.

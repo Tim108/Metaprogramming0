@@ -1,11 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Metaprogramming0.dir/symm.cpp.obj"
-  "CMakeFiles/Metaprogramming0.dir/Vector.cpp.obj"
-  "CMakeFiles/Metaprogramming0.dir/matrix.cpp.obj"
+  "CMakeFiles/Metaprogramming0.dir/symm.cpp.o"
+  "CMakeFiles/Metaprogramming0.dir/Vector.cpp.o"
+  "CMakeFiles/Metaprogramming0.dir/matrix.cpp.o"
+  "CMakeFiles/Metaprogramming0.dir/ass2.cpp.o"
   "Metaprogramming0.pdb"
-  "Metaprogramming0.exe"
-  "Metaprogramming0.exe.manifest"
-  "libMetaprogramming0.dll.a"
+  "Metaprogramming0"
 )
 
 # Per-language clean rules from dependency scanning.

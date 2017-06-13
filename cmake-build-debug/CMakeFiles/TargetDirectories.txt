@@ -1,3 +1,3 @@
-C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir
-C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Tim/ClionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/tim/CLionProjects/Metaprogramming0/cmake-build-debug/CMakeFiles/Metaprogramming0.dir
