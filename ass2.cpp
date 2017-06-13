@@ -2,10 +2,11 @@
 // Created by tim on 12-6-17.
 //
 
-#include <array>
 #include <vector>
+#include <string>
+#include <iostream>
+#include <array>
 #include "ass2.h"
-#include "Vector.h"
 
 using namespace std;
 
@@ -17,15 +18,17 @@ int main() {
     v[3] = "axx";
     v[4] = "ac";
 
-//    set<string> s;
-//    s.insert("a");
-//    s.insert("abb");
-//    s.insert("ab");
-//    s.insert("axx");
-//    s.insert("ac");
+    vector<int> v2(5);
+    v2[0] = 1;
+    v2[1] = 2;
+    v2[2] = 1;
+    v2[3] = 0;
+    v2[4] = 1;
 
     auto r = longest(v);
     for (auto i : r) {
         cout << *i << endl;
     }
+
+
 }
