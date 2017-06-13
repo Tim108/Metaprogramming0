@@ -6,21 +6,21 @@
 
 #IncludeRegexTransform: 
 
-/home/tim/CLionProjects/Metaprogramming0/Vector.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/Vector.cpp
 
-/home/tim/CLionProjects/Metaprogramming0/Vector.h
+C:/Users/Tim/ClionProjects/Metaprogramming0/Vector.h
 
-/home/tim/CLionProjects/Metaprogramming0/ass2.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/ass2.cpp
 array
 -
 vector
 -
 ass2.h
-/home/tim/CLionProjects/Metaprogramming0/ass2.h
+C:/Users/Tim/ClionProjects/Metaprogramming0/ass2.h
 Vector.h
-/home/tim/CLionProjects/Metaprogramming0/Vector.h
+C:/Users/Tim/ClionProjects/Metaprogramming0/Vector.h
 
-/home/tim/CLionProjects/Metaprogramming0/ass2.h
+C:/Users/Tim/ClionProjects/Metaprogramming0/ass2.h
 array
 -
 set
@@ -28,7 +28,7 @@ set
 iostream
 -
 
-/home/tim/CLionProjects/Metaprogramming0/matrix.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/matrix.cpp
 iostream
 -
 utility
@@ -40,5 +40,5 @@ algorithm
 memory
 -
 
-/home/tim/CLionProjects/Metaprogramming0/symm.cpp
+C:/Users/Tim/ClionProjects/Metaprogramming0/symm.cpp
 

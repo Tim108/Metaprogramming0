@@ -134,9 +134,14 @@ public:
         return *this;
     }
 
-    void swap(Matrix &other) {
-        using std::swap;
-        swap(data, other.data);
+    void swap(Matrix &other) noexcept {
+        //using std::swap;
+        //swap(data, other.data);
+        MatrixData<T> *tempData = data;
+        data = other.data;
+        other.data = tempData;
+        delete tempData;
+
 //        swap(list, other.list);
 //        swap(m_dimension, other.m_dimension);
 //        swap(m_capacity, other.m_capacity);
@@ -144,7 +149,7 @@ public:
 //        swap(m_size_internal, other.m_size_internal);
     }
 
-    void deep_copy(){
+    void deep_copy() {
         if (data->refs > 1) {
             data->refs--;
             MatrixData<T> *newData = new MatrixData<T>;
@@ -160,17 +165,23 @@ public:
     }
 
     T &operator[](size_t i) {
+        if (i >= data->m_size) {
+            throw range_error("Index out of range");
+        }
         return data->list[to_internal_i(i)];
     }
 
     const T &operator[](size_t i) const {
+        if (i >= data->m_size) {
+            throw range_error("Index out of range");
+        }
         return data->list[to_internal_i(i)];
     }
 
     void push_front(const T &t) { // insert front
         deep_copy();
-        if (data->m_size >= data->m_capacity){}
-            increase_capacity();
+        if (data->m_size >= data->m_capacity) {}
+        increase_capacity();
 
         for (int i = data->m_size_internal; i >= 0; --i) {
             data->list[i + 1] = data->list[i];
@@ -213,15 +224,19 @@ public:
     }
 
     void pop_front() { // remove
-        for (size_t i = 1; i < data->m_size_internal; ++i)
-            data->list[i - 1] = data->list[i];
-        --data->m_size_internal;
-        if (data->m_size % data->m_dimension == floor(data->m_size / data->m_dimension)) {
-            data->m_size -= 1;
+        if (data->m_size == 0) {
+            throw range_error("Matrix is empty");
         } else {
-            data->m_size -= 2;
+            for (size_t i = 1; i < data->m_size_internal; ++i)
+                data->list[i - 1] = data->list[i];
+            --data->m_size_internal;
+            if (data->m_size % data->m_dimension == floor(data->m_size / data->m_dimension)) {
+                data->m_size -= 1;
+            } else {
+                data->m_size -= 2;
+            }
+            data->list[data->m_size_internal] = 0;
         }
-        data->list[data->m_size_internal] = 0;
     }
 
     size_t size() const {
@@ -272,71 +287,71 @@ public:
 };
 
 
-int main() {
-    bool basicTest = true;
-    bool COWTest = true;
-
-    if (basicTest) {
-
-        Matrix<int> v(9);
-
-        v.output("one");
-        for (int i = 0; i < 9; ++i) {
-            v[i] = i;
-        }
-
-        v.output("two");
-
-        for (int i = 9; i < 18; ++i) {
-            v.push_back(i);
-        }
-
-        v.output("three");
-
-        v.pop_front();
-        v.pop_front();
-        v.pop_front();
-
-        v.output("four");
-
-        copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
-        cout << endl;
-
-        Matrix<int> v2 = v;
-        v.output("original");
-        v.pop_front();
-        v2 = v;
-        v.output("popped");
-
-
-        v = std::move(v2);  // (2)
-        v.output("v after move");
-        v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
-
-        swap(v, v2);
-        v.output("v after swap");
-        v2.output("v2 after swap");
-
-        v2.push_front(99);
-        v2.output("v2 after pushing 99 up front");
-    }
-
-    if (COWTest) {
-        Matrix<int> a(0);
-        a.push_front(1);
-        a.push_front(2);
-        a.push_front(3);
-        a.push_front(4);
-        a.output("A - Start");
-
-        Matrix<int> b(a);
-        a.output("A - After creating B");
-        b.output("B - After creating B");
-//        // good so far...
+//int main() {
+//    bool basicTest = true;
+//    bool COWTest = true;
 //
-        a.push_front(99); // should add only to 'a' not 'b'
-        a.output("A - After adding 99 to A");
-        b.output("B - After adding 99 to A");
-    }
+//    if (basicTest) {
+//
+//        Matrix<int> v(9);
+//
+//        v.output("one");
+//        for (int i = 0; i < 9; ++i) {
+//            v[i] = i;
+//        }
+//
+//        v.output("two");
+//
+//        for (int i = 9; i < 18; ++i) {
+//            v.push_back(i);
+//        }
+//
+//        v.output("three");
+//
+//        v.pop_front();
+//        v.pop_front();
+//        v.pop_front();
+//
+//        v.output("four");
+//
+//        copy(v.cbegin(), v.cend(), ostream_iterator<int>(cout, " "));
+//        cout << endl;
+//
+//        Matrix<int> v2 = v;
+//        v.output("original");
+//        v.pop_front();
+//        v2 = v;
+//        v.output("popped");
+//
+//
+//        v = std::move(v2);  // (2)
+//        v.output("v after move");
+//        v2.output("v2 after move"); // (1) - referencing v2 after moving it in (2)
+//
+//        swap(v, v2);
+//        v.output("v after swap");
+//        v2.output("v2 after swap");
+//
+//        v2.push_front(99);
+//        v2.output("v2 after pushing 99 up front");
+//    }
+//
+//    if (COWTest) {
+//        Matrix<int> a(0);
+//        a.push_front(1);
+//        a.push_front(2);
+//        a.push_front(3);
+//        a.push_front(4);
+//        a.output("A - Start");
+//
+//        Matrix<int> b(a);
+//        a.output("A - After creating B");
+//        b.output("B - After creating B");
+////        // good so far...
+////
+//        a.push_front(99); // should add only to 'a' not 'b'
+//        a.output("A - After adding 99 to A");
+//        b.output("B - After adding 99 to A");
+//    }
 
-}
+//}
